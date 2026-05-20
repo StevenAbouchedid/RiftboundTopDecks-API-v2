@@ -1,0 +1,1 @@
+"""Riftbound Stats V2 API"""
