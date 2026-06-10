@@ -5,12 +5,12 @@ from typing import Optional
 from datetime import date
 from app.database import get_db
 from app.models.event import Event
-from app.schemas.event import EventResponse
+from app.schemas.event import EventResponse, EventListResponse
 
 router = APIRouter()
 
 
-@router.get("/events", response_model=list[EventResponse])
+@router.get("/events", response_model=EventListResponse)
 async def list_events(
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=100),
@@ -34,10 +34,19 @@ async def list_events(
     # Order by date descending
     query = query.order_by(Event.event_date.desc())
     
+    # Get total count
+    total = query.count()
+    
+    # Apply pagination
     offset = (page - 1) * page_size
     events = query.offset(offset).limit(page_size).all()
     
-    return events
+    return EventListResponse(
+        data=events,
+        total=total,
+        page=page,
+        page_size=page_size
+    )
 
 
 @router.get("/events/{event_id}", response_model=EventResponse)

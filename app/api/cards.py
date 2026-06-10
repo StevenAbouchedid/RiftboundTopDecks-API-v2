@@ -39,7 +39,8 @@ async def list_cards(
         query = query.filter(Card.set == set_name)
     
     if domain:
-        query = query.filter(Card.domains.contains([domain]))
+        # Use ANY to check if domain is in the array
+        query = query.filter(Card.domains.any(domain))
     
     # Get total count
     total = query.count()
@@ -49,7 +50,7 @@ async def list_cards(
     cards = query.offset(offset).limit(page_size).all()
     
     return CardListResponse(
-        cards=cards,
+        data=cards,
         total=total,
         page=page,
         page_size=page_size

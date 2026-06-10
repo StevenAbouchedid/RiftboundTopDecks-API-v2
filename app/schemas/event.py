@@ -47,3 +47,14 @@ class EventResponse(EventBase):
     
     class Config:
         from_attributes = True
+
+
+class EventListResponse(BaseModel):
+    """Schema for paginated event list"""
+    data: list[EventResponse]
+    total: int
+    page: int
+    page_size: int
+    
+    class Config:
+        from_attributes = True

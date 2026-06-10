@@ -57,3 +57,14 @@ class DeckValidationResponse(BaseModel):
     """Schema for deck validation response"""
     is_valid: bool
     errors: list[str] = []
+
+
+class DeckListResponse(BaseModel):
+    """Schema for paginated deck list"""
+    data: list[DeckResponse]
+    total: int
+    page: int
+    page_size: int
+    
+    class Config:
+        from_attributes = True

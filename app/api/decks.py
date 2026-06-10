@@ -5,12 +5,12 @@ from sqlalchemy import text
 from typing import Optional
 from app.database import get_db
 from app.models.deck import Deck, DeckCard
-from app.schemas.deck import DeckCreate, DeckResponse, DeckValidationResponse
+from app.schemas.deck import DeckCreate, DeckResponse, DeckValidationResponse, DeckListResponse
 
 router = APIRouter()
 
 
-@router.get("/decks", response_model=list[DeckResponse])
+@router.get("/decks", response_model=DeckListResponse)
 async def list_decks(
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=100),
@@ -27,10 +27,19 @@ async def list_decks(
     if format_id:
         query = query.filter(Deck.format_id == format_id)
     
+    # Get total count
+    total = query.count()
+    
+    # Apply pagination
     offset = (page - 1) * page_size
     decks = query.offset(offset).limit(page_size).all()
     
-    return decks
+    return DeckListResponse(
+        data=decks,
+        total=total,
+        page=page,
+        page_size=page_size
+    )
 
 
 @router.get("/decks/{deck_id}", response_model=DeckResponse)

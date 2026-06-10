@@ -45,7 +45,7 @@ class CardResponse(CardBase):
 
 class CardListResponse(BaseModel):
     """Schema for paginated card list"""
-    cards: list[CardResponse]
+    data: list[CardResponse]
     total: int
     page: int
     page_size: int
